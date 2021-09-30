@@ -11,13 +11,10 @@ const User = sequelize.define('user', {
 
 const Basket = sequelize.define('basket', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    userId: {type: DataTypes.INTEGER, unique: true},
 })
 
 const BasketDevice = sequelize.define('basket_device', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    deviceId: {type: DataTypes.INTEGER, unique: true},
-    basketId: {type: DataTypes.INTEGER, unique: true},
 })
 
 const Device = sequelize.define('device', {
@@ -41,13 +38,10 @@ const Brand = sequelize.define('brand', {
 const Rating = sequelize.define('rating', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     rate: {type: DataTypes.INTEGER, allowNull: false},
-    userId: {type: DataTypes.INTEGER, unique: true, allowNull: false},
-    deviceId: {type: DataTypes.INTEGER, unique: true, allowNull: false},
 })
 
 const DeviceInfo = sequelize.define('device_info', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    deviceId: {type: DataTypes.INTEGER, allowNull: false},
     title: {type: DataTypes.STRING, allowNull: false},
     description: {type: DataTypes.STRING, allowNull: false},
 })
