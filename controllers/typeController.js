@@ -2,6 +2,7 @@ const {Type} = require('../models/models')
 const ApiError = require('../error/ApiError')
 
 class TypeController {
+
     async create(req, res) {
         const {name} = req.body
         const type = await Type.create({name})
@@ -10,7 +11,7 @@ class TypeController {
 
     async getAll(req, res) {
         const types = await Type.findAll()
-        return res.json(types)
+        return res.json(types.sort((a, b) => a.name > b.name ? 1 : -1))
     }
 }
 
