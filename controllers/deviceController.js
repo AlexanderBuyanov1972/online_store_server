@@ -1,6 +1,6 @@
 const uuid = require('uuid')
 const path = require('path')
-const {Device, DeviceInfo, Type, Brand} = require('../models/models')
+const { Device, DeviceInfo, Type, Brand } = require('../models/models')
 const ApiError = require('../error/ApiError')
 const {
     ERROR_OBJECT_IS_NOT_CREATE,
@@ -15,12 +15,12 @@ const {
 class DeviceController {
     async create(req, res, next) {
         try {
-            let {name, price, typeId, brandId, info} = req.body
-            const {img} = req.files
+            let { name, price, typeId, brandId, info } = req.body
+            const { img } = req.files
             let fileName = uuid.v4() + '.jpg'
             await img.mv(path.resolve(__dirname, '..', 'static', fileName))
 
-            const device = await Device.create({name, price, typeId, brandId, img: fileName})
+            const device = await Device.create({ name, price, typeId, brandId, img: fileName })
 
             if (info) {
                 info = JSON.parse(info)
@@ -41,37 +41,71 @@ class DeviceController {
     }
 
     async update(req, res, next) {
+        const { id } = req.params
         try {
-            let {name, price, typeId, brandId, info, id} = req.body
-            const {img} = req.files
+            let { name, price, typeId, brandId, info } = req.body
+            console.log('Этап номер 1')
+            const { img } = req.files
+            console.log('Этап номер 2')
             let fileName = uuid.v4() + '.jpg'
+            console.log('Этап номер 3')
             await img.mv(path.resolve(__dirname, '..', 'static', fileName))
-            await Device.destroy({where: {id: id}})
-            const device = await Device.create({id, name, price, typeId, brandId, img: fileName})
+            console.log('Этап номер 4')
+            await Device.update({ name, price, typeId, brandId, img: fileName },
+                {
+                    where: { id: id }
+                }).then(num => {
+                    if (num == 1) {
+                        console.log('Обновились!!!')
+                        res.send({
 
+                            message: "Tutorial was updated successfully."
+                        });
+                    }
+                }).catch((e) => {
+                    console.log('e.message')
+                })
+
+            // if (info) {
+            //     console.log('Этап номер 5')
+            //     await DeviceInfo.destroy({ where: { deviceId: id } })
+            //     console.log('Этап номер 6')
+            //     info = JSON.parse(info)
+            //     console.log('Этап номер 7')
+            //     console.log(info)
+            //     info.forEach(i => {
+            //         console.log('Цикл номер --->', i.id)
+            //          DeviceInfo.create({
+            //             title: i.title,
+            //             description: i.description,
+            //             deviceId: id
+            //         })
+            //     })
+            // }
             if (info) {
                 info = JSON.parse(info)
                 info.forEach(i => {
                     DeviceInfo.create({
                         title: i.title,
                         description: i.description,
-                        deviceId: id
+                        deviceId: device.id
                     })
                 })
             }
-            return res.json(device)
-        }catch (e) {
+
+            return res.json("Всё нормально")
+        } catch (e) {
             next(ApiError.internal(ERROR_OBJECT_IS_NOT_UPDATE))
         }
-
     }
+
 
     async getOne(req, res, next) {
         try {
-            const {id} = req.params
+            const { id } = req.params
             const device = await Device.findOne({
-                where: {id},
-                include: [{model: DeviceInfo, as: 'info'}]
+                where: { id },
+                include: [{ model: DeviceInfo, as: 'info' }]
             })
             return res.json(device)
         } catch (e) {
@@ -81,22 +115,22 @@ class DeviceController {
 
     async getAll(req, res, next) {
         try {
-            let {typeId, brandId, limit, pageCurrent} = req.query
+            let { typeId, brandId, limit, pageCurrent } = req.query
             pageCurrent = pageCurrent || 1
             limit = limit || 5
             let offset = (pageCurrent - 1) * limit
             let devices;
             if (brandId && typeId) {
-                devices = await Device.findAndCountAll({where: {typeId, brandId}, limit, offset})
+                devices = await Device.findAndCountAll({ where: { typeId, brandId }, limit, offset })
             }
             if (!brandId && typeId) {
-                devices = await Device.findAndCountAll({where: {typeId}, limit, offset})
+                devices = await Device.findAndCountAll({ where: { typeId }, limit, offset })
             }
             if (brandId && !typeId) {
-                devices = await Device.findAndCountAll({where: {brandId}, limit, offset})
+                devices = await Device.findAndCountAll({ where: { brandId }, limit, offset })
             }
             if (!brandId && !typeId) {
-                devices = await Device.findAndCountAll({limit, offset})
+                devices = await Device.findAndCountAll({ limit, offset })
             }
             return res.json(devices)
         } catch (e) {
@@ -107,9 +141,9 @@ class DeviceController {
 
     async delete(req, res, next) {
         try {
-            const {id} = req.params
-            await Device.destroy({where: {id: id}})
-            return res.json({"message": SUCCESSFUL_DELETION_WITH_DEFINED_ID})
+            const { id } = req.params
+            await Device.destroy({ where: { id: id } })
+            return res.json({ "message": SUCCESSFUL_DELETION_WITH_DEFINED_ID })
         } catch (e) {
             next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
         }
@@ -118,7 +152,7 @@ class DeviceController {
     async deleteAll(req, res, next) {
         try {
             await Device.destroy()
-            return res.json({"message": SUCCESSFUL_DELETION})
+            return res.json({ "message": SUCCESSFUL_DELETION })
         } catch (e) {
             next(ApiError.internal(ERROR_DATA_IS_NOT_DELETED))
         }
