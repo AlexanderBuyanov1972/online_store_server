@@ -1,4 +1,4 @@
-const {Brand} = require('../models/models')
+const { Brand } = require('../models/models')
 const ApiError = require('../error/ApiError')
 const {
     ERROR_OBJECT_IS_NOT_CREATE,
@@ -12,20 +12,19 @@ const {
 
 class BrandController {
     async create(req, res, next) {
-        try {
-            const {name} = req.body
-            const brand = await Brand.create({name})
-            return res.json(brand)
-        } catch (e) {
-            next(ApiError.internal(ERROR_OBJECT_IS_NOT_CREATE))
-        }
+        const { name } = req.body
+        Brand.create({ name }).then((data) => {
+            return res.json(data)
+        }).catch((err) => {
+            return res.json(next(ApiError.internal(ERROR_OBJECT_IS_NOT_CREATE)))
+        })
     }
 
     async update(req, res, next) {
         try {
-            const {id} = req.params
+            const { id } = req.params
             const brand = await Brand.update(req.body, {
-                where: {id: id}
+                where: { id: id }
             })
             return res.json(brand)
         } catch (e) {
@@ -35,7 +34,7 @@ class BrandController {
 
     async getOne(req, res, next) {
         try {
-            const {id} = req.params
+            const { id } = req.params
             const brand = await Brand.findByPk(id)
             return res.json(brand)
         } catch (e) {
@@ -55,9 +54,9 @@ class BrandController {
 
     async delete(req, res, next) {
         try {
-            const {id} = req.params
-            await Brand.destroy({where: {id: id}})
-            return res.json({"message": SUCCESSFUL_DELETION_WITH_DEFINED_ID})
+            const { id } = req.params
+            await Brand.destroy({ where: { id: id } })
+            return res.json({ "message": SUCCESSFUL_DELETION_WITH_DEFINED_ID })
         } catch (e) {
             next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
         }
@@ -66,7 +65,7 @@ class BrandController {
     async deleteAll(req, res, next) {
         try {
             await Brand.destroy()
-            return res.json({"message": SUCCESSFUL_DELETION})
+            return res.json({ "message": SUCCESSFUL_DELETION })
         } catch (e) {
             next(ApiError.internal(ERROR_DATA_IS_NOT_DELETED))
         }

@@ -43,20 +43,20 @@ class DeviceController {
     async update(req, res, next) {
         const { id } = req.params
         try {
-            let { name, price, typeId, brandId, info } = req.body
-            console.log('Этап номер 1')
-            const { img } = req.files
-            console.log('Этап номер 2')
-            let fileName = uuid.v4() + '.jpg'
-            console.log('Этап номер 3')
-            await img.mv(path.resolve(__dirname, '..', 'static', fileName))
-            console.log('Этап номер 4')
-            await Device.update({ name, price, typeId, brandId, img: fileName },
+            let fileName = ''
+            let { name, price, rating, typeId, brandId, img, info } = req.body
+            if (img) {
+                fileName = img
+            } else {
+                const { img } = req.files
+                fileName = uuid.v4() + '.jpg'
+                await img.mv(path.resolve(__dirname, '..', 'static', fileName))
+            }
+            await Device.update({ name, price, typeId, brandId, rating, img: fileName },
                 {
                     where: { id: id }
                 }).then(num => {
                     if (num == 1) {
-                        console.log('Обновились!!!')
                         res.send({
 
                             message: "Tutorial was updated successfully."
@@ -66,29 +66,15 @@ class DeviceController {
                     console.log('e.message')
                 })
 
-            // if (info) {
-            //     console.log('Этап номер 5')
-            //     await DeviceInfo.destroy({ where: { deviceId: id } })
-            //     console.log('Этап номер 6')
-            //     info = JSON.parse(info)
-            //     console.log('Этап номер 7')
-            //     console.log(info)
-            //     info.forEach(i => {
-            //         console.log('Цикл номер --->', i.id)
-            //          DeviceInfo.create({
-            //             title: i.title,
-            //             description: i.description,
-            //             deviceId: id
-            //         })
-            //     })
-            // }
+
             if (info) {
                 info = JSON.parse(info)
+                await DeviceInfo.destroy({ where: { deviceId: id } })
                 info.forEach(i => {
                     DeviceInfo.create({
                         title: i.title,
                         description: i.description,
-                        deviceId: device.id
+                        deviceId: id
                     })
                 })
             }

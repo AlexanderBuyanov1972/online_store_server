@@ -1,4 +1,4 @@
-const {Type} = require('../models/models')
+const { Type } = require('../models/models')
 const ApiError = require('../error/ApiError')
 const {
     ERROR_OBJECT_IS_NOT_CREATE,
@@ -13,24 +13,24 @@ const {
 class TypeController {
     //create one object
     async create(req, res, next) {
-        try {
-            const {name} = req.body
-            const type = await Type.create({name})
-            return res.json(type)
-        } catch (e) {
+        const { name } = req.body
+        Type.create({ name }).then((data) => {
+            return res.json(data)
+        }).catch((err) => {
             next(ApiError.internal(ERROR_OBJECT_IS_NOT_CREATE))
-        }
+        })
+
     }
 
     //update one object
     async update(req, res, next) {
         try {
-            const {id} = req.params
+            const { id } = req.params
             const type = await Type.update(req.body, {
-                where: {id: id}
+                where: { id: id }
             })
             return res.json(type)
-        } catch (e) {
+        } catch (err) {
             next(ApiError.internal(ERROR_OBJECT_IS_NOT_UPDATE))
         }
     }
@@ -38,7 +38,7 @@ class TypeController {
     // get one object by id
     async getOne(req, res, next) {
         try {
-            const {id} = req.params
+            const { id } = req.params
             const type = await Type.findByPk(id)
             return res.json(type)
         } catch (e) {
@@ -62,9 +62,9 @@ class TypeController {
     // delete one object by id
     async delete(req, res, next) {
         try {
-            const {id} = req.params
-            await Type.destroy({where: {id: id}})
-            return res.json({"message": SUCCESSFUL_DELETION_WITH_DEFINED_ID})
+            const { id } = req.params
+            await Type.destroy({ where: { id: id } })
+            return res.json({ "message": SUCCESSFUL_DELETION_WITH_DEFINED_ID })
         } catch (e) {
             next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
         }
@@ -75,7 +75,7 @@ class TypeController {
     async deleteAll(req, res, next) {
         try {
             await Type.destroy()
-            return res.json({"message": SUCCESSFUL_DELETION})
+            return res.json({ "message": SUCCESSFUL_DELETION })
         } catch (e) {
             next(ApiError.internal(ERROR_DATA_IS_NOT_DELETED))
         }
