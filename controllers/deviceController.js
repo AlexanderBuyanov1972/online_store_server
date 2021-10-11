@@ -58,7 +58,6 @@ class DeviceController {
                 }).then(num => {
                     if (num == 1) {
                         res.send({
-
                             message: "Tutorial was updated successfully."
                         });
                     }

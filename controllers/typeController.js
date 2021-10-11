@@ -11,28 +11,23 @@ const {
 } = require('../error/ApiMessages')
 
 class TypeController {
-    //create one object
-    async create(req, res, next) {
+    async create(req, res) {
         const { name } = req.body
         Type.create({ name }).then((data) => {
             return res.json(data)
         }).catch((err) => {
-            next(ApiError.internal(ERROR_OBJECT_IS_NOT_CREATE))
+            return res.json({ message: err.message })
         })
 
     }
 
-    //update one object
-    async update(req, res, next) {
-        try {
-            const { id } = req.params
-            const type = await Type.update(req.body, {
-                where: { id: id }
-            })
-            return res.json(type)
-        } catch (err) {
-            next(ApiError.internal(ERROR_OBJECT_IS_NOT_UPDATE))
-        }
+    async update(req, res) {
+        const { id } = req.params
+        Type.update(req.body, {
+            where: { id: id }
+        }).then(() => res.json({message: ''})).catch((err) => {
+            return res.json({ message: err.message })
+        })
     }
 
     // get one object by id
