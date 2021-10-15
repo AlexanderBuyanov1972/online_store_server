@@ -1,5 +1,6 @@
 const { Brand } = require('../models/models')
 const ApiError = require('../error/ApiError')
+const HelpFunction = require('./helpFunctions')
 const {
     ERROR_OBJECT_IS_NOT_CREATE,
     ERROR_OBJECT_IS_NOT_UPDATE,
@@ -45,8 +46,8 @@ class BrandController {
     async getAll(req, res, next) {
         try {
             const brands = await Brand.findAll()
-            const compare = (a, b) => a.name > b.name ? 1 : -1
-            return res.json(brands.sort(compare))
+            const value = 'All brands'
+            return res.json(HelpFunction.arraySort(brands, value))
         } catch (e) {
             next(ApiError.internal(ERROR_DATA_IS_NOT_RECEIVED))
         }

@@ -1,5 +1,6 @@
 const { Type } = require('../models/models')
 const ApiError = require('../error/ApiError')
+const HelpFunction = require('./helpFunctions')
 const {
     ERROR_OBJECT_IS_NOT_CREATE,
     ERROR_OBJECT_IS_NOT_UPDATE,
@@ -9,6 +10,8 @@ const {
     SUCCESSFUL_DELETION,
     SUCCESSFUL_DELETION_WITH_DEFINED_ID
 } = require('../error/ApiMessages')
+const { arraySort } = require('./helpFunctions')
+
 
 class TypeController {
     async create(req, res) {
@@ -25,7 +28,7 @@ class TypeController {
         const { id } = req.params
         Type.update(req.body, {
             where: { id: id }
-        }).then(() => res.json({message: ''})).catch((err) => {
+        }).then(() => res.json({ message: '' })).catch((err) => {
             return res.json({ message: err.message })
         })
     }
@@ -46,12 +49,17 @@ class TypeController {
     async getAll(req, res, next) {
         try {
             const types = await Type.findAll()
-            const compare = (a, b) => a.name > b.name ? 1 : -1
-            return res.json(types.sort(compare))
+            const value = 'Все типы'
+            return res.json(HelpFunction.arraySort(types, value))
         } catch (e) {
             next(ApiError.internal(ERROR_DATA_IS_NOT_RECEIVED))
         }
 
+    }
+
+    arraySort = (array, value, compare) => {
+
+        return
     }
 
     // delete one object by id
