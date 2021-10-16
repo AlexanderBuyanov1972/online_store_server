@@ -1,15 +1,7 @@
 const { Brand } = require('../models/models')
 const ApiError = require('../error/ApiError')
 const HelpFunction = require('./helpFunctions')
-const {
-    ERROR_OBJECT_IS_NOT_CREATE,
-    ERROR_OBJECT_IS_NOT_UPDATE,
-    ERROR_OBJECT_IS_NOT_EXIST,
-    ERROR_DATA_IS_NOT_RECEIVED,
-    ERROR_DATA_IS_NOT_DELETED,
-    SUCCESSFUL_DELETION,
-    SUCCESSFUL_DELETION_WITH_DEFINED_ID
-} = require('../error/ApiMessages')
+const ErrorMessage = require('../error/ApiMessages')
 
 class BrandController {
     async create(req, res, next) {
@@ -17,7 +9,7 @@ class BrandController {
         Brand.create({ name }).then((data) => {
             return res.json(data)
         }).catch((err) => {
-            return res.json(next(ApiError.internal(ERROR_OBJECT_IS_NOT_CREATE)))
+            return res.json(next(ApiError.internal(ErrorMessage.ERROR_OBJECT_IS_NOT_CREATE)))
         })
     }
 
