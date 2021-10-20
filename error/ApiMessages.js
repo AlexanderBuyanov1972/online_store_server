@@ -1,4 +1,4 @@
-class ErrorMessage {
+class ApiMessage {
     ERROR_OBJECT_IS_NOT_CREATE = "Ошибка сервера. Объект не создан."
     ERROR_OBJECT_IS_NOT_UPDATE = "Ошибка сервера. Объект не обновлён."
     ERROR_OBJECT_IS_NOT_EXIST = "Ошибка клиента.Объект c таким id не существует."
@@ -9,4 +9,4 @@ class ErrorMessage {
     SUCCESSFUL_DELETION_WITH_DEFINED_ID = "Объект с заданным id успешно удалён."
 }
 
-module.exports = ErrorMessage;
+module.exports = new ApiMessage;

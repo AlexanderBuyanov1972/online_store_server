@@ -1,16 +1,8 @@
 const uuid = require('uuid')
 const path = require('path')
-const { Device, DeviceInfo, Type, Brand } = require('../models/models')
+const { Device, DeviceInfo } = require('../models/models')
 const ApiError = require('../error/ApiError')
-const {
-    ERROR_OBJECT_IS_NOT_CREATE,
-    ERROR_OBJECT_IS_NOT_UPDATE,
-    ERROR_OBJECT_IS_NOT_EXIST,
-    ERROR_DATA_IS_NOT_RECEIVED,
-    ERROR_DATA_IS_NOT_DELETED,
-    SUCCESSFUL_DELETION,
-    SUCCESSFUL_DELETION_WITH_DEFINED_ID
-} = require('../error/ApiMessages')
+const ApiMessage = require('../error/ApiMessage')
 
 class DeviceController {
     async create(req, res, next) {
@@ -18,7 +10,7 @@ class DeviceController {
             let { name, price, rating, typeId, brandId, info } = req.body
             const { img } = req.files
             let fileName = uuid.v4() + '.jpg'
-            await img.mv(path.resolve(__dirname, '..', 'static', fileName))
+            await img.mv(path.resolve(__dirname, '..', 'static/photoDevices', fileName))
 
             const device = await Device.create({ name, price, rating, typeId, brandId, img: fileName })
 
@@ -35,7 +27,7 @@ class DeviceController {
 
             return res.json(device)
         } catch (err) {
-            next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_CREATE))
+            next(ApiError.bedRequest({ "message": ApiMessage.ERROR_OBJECT_IS_NOT_CREATE }))
         }
 
     }
@@ -52,18 +44,17 @@ class DeviceController {
                 fileName = uuid.v4() + '.jpg'
                 await img.mv(path.resolve(__dirname, '..', 'static', fileName))
             }
-            await Device.update({ name, price, typeId, brandId, rating, img: fileName },
-                {
-                    where: { id: id }
-                }).then(num => {
-                    if (num == 1) {
-                        res.send({
-                            message: "Tutorial was updated successfully."
-                        });
-                    }
-                }).catch((e) => {
-                    console.log('e.message')
-                })
+            await Device.update({ name, price, typeId, brandId, rating, img: fileName }, {
+                where: { id: id }
+            }).then(num => {
+                if (num == 1) {
+                    res.send({
+                        message: "Tutorial was updated successfully."
+                    });
+                }
+            }).catch((e) => {
+                console.log('e.message')
+            })
 
 
             if (info) {
@@ -78,9 +69,9 @@ class DeviceController {
                 })
             }
 
-            return res.json("Всё нормально")
+            return res.json({ "message": "Всё нормально" })
         } catch (e) {
-            next(ApiError.internal(ERROR_OBJECT_IS_NOT_UPDATE))
+            next(ApiError.internal({ "message": ApiMessage.ERROR_OBJECT_IS_NOT_UPDATE }))
         }
     }
 
@@ -94,7 +85,7 @@ class DeviceController {
             })
             return res.json(device)
         } catch (e) {
-            next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
+            next(ApiError.bedRequest({ "message": ApiMessage.ERROR_OBJECT_IS_NOT_EXIST }))
         }
     }
 
@@ -119,7 +110,7 @@ class DeviceController {
             }
             return res.json(devices)
         } catch (e) {
-            next(ApiError.internal(ERROR_DATA_IS_NOT_RECEIVED))
+            next(ApiError.internal({ "message": ApiMessage.ERROR_DATA_IS_NOT_RECEIVED }))
         }
     }
 
@@ -128,18 +119,18 @@ class DeviceController {
         try {
             const { id } = req.params
             await Device.destroy({ where: { id: id } })
-            return res.json({ "message": SUCCESSFUL_DELETION_WITH_DEFINED_ID })
+            return res.json({ "message": ApiMessage.SUCCESSFUL_DELETION_WITH_DEFINED_ID })
         } catch (e) {
-            next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
+            next(ApiError.bedRequest({ "message": ApiMessage.ERROR_OBJECT_IS_NOT_EXIST }))
         }
     }
 
     async deleteAll(req, res, next) {
         try {
             await Device.destroy()
-            return res.json({ "message": SUCCESSFUL_DELETION })
+            return res.json({ "message": ApiMessage.SUCCESSFUL_DELETION })
         } catch (e) {
-            next(ApiError.internal(ERROR_DATA_IS_NOT_DELETED))
+            next(ApiError.internal({ "message": ApiMessage.ERROR_DATA_IS_NOT_DELETED }))
         }
     }
 
