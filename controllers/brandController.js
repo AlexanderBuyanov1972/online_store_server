@@ -1,7 +1,6 @@
 const { Brand } = require('../models/models')
 const ApiError = require('../error/ApiError')
 const HelpFunction = require('./helpFunctions')
-const ErrorMessage = require('../error/ApiMessages')
 
 class BrandController {
     async create(req, res, next) {

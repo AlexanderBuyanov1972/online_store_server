@@ -1,6 +1,5 @@
 const { Basket } = require('../models/models')
 const ApiError = require('../error/ApiError')
-const ErrorMessage = require('../error/ApiMessages')
 
 class BasketController {
 
@@ -10,7 +9,7 @@ class BasketController {
             const basket = await Basket.findOne({ where: { userId: id } })
             return res.json(basket)
         } catch (e) {
-            next(ApiError.bedRequest(ErrorMessage.ERROR_OBJECT_IS_NOT_EXIST))
+            next(ApiError.bedRequest(e.message))
         }
     }
 
@@ -18,9 +17,9 @@ class BasketController {
         try {
             const { id } = req.params
             await Basket.destroy({ where: { id: id } })
-            return res.json({ "message": ErrorMessage.SUCCESSFUL_DELETION_WITH_DEFINED_ID })
+            return res.json({ "message": "Удаление прошло успешно" })
         } catch (e) {
-            next(ApiError.bedRequest(ErrorMessage.ERROR_OBJECT_IS_NOT_EXIST))
+            next(ApiError.bedRequest(e.message))
         }
     }
 }

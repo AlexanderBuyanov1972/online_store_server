@@ -1,17 +1,15 @@
 const { BasketDevice, Basket, Device } = require('../models/models')
 const ApiError = require('../error/ApiError')
-const ErrorMessage = require('../error/ApiMessages')
 
 class BasketDeviceController {
     async create(req, res, next) {
         try {
             const { userId, deviceId } = req.params
             const basket = await Basket.findOne({ where: { userId } })
-            const data = await BasketDevice.create(
-                { basketId: basket.dataValues.id, deviceId })
+            const data = await BasketDevice.create({ basketId: basket.dataValues.id, deviceId })
             return res.json(data)
-        } catch (err) {
-            return res.json(next(ApiError.internal(ErrorMessage.ERROR_OBJECT_IS_NOT_CREATE)))
+        } catch (e) {
+            next(ApiError.internal(e.message))
         }
 
     }
@@ -22,12 +20,13 @@ class BasketDeviceController {
             const basket = await Basket.findOne({ where: { userId } })
             const basketDevice = await BasketDevice.findOne({
                 where: {
-                    basketId: basket.dataValues.id, deviceId
+                    basketId: basket.dataValues.id,
+                    deviceId
                 }
             })
             return res.json(basketDevice)
-        } catch (err) {
-            next(ApiError.bedRequest(ErrorMessage.ERROR_OBJECT_IS_NOT_EXIST))
+        } catch (e) {
+            next(ApiError.bedRequest(e.message))
         }
     }
 
@@ -67,8 +66,7 @@ class BasketDeviceController {
             const { userId, deviceId } = req.params
             const basket = await Basket.findOne({ where: { userId } })
             const basketDevice = await BasketDevice.findOne({
-                where:
-                    { basketId: basket.dataValues.id, deviceId }
+                where: { basketId: basket.dataValues.id, deviceId }
             })
             if (basketDevice) {
                 await BasketDevice.destroy({
@@ -78,7 +76,7 @@ class BasketDeviceController {
 
             return res.json({ "message": "Удаление прошло успешно" })
         } catch (e) {
-            next(ApiError.bedRequest(ErrorMessage.ERROR_OBJECT_IS_NOT_EXIST))
+            next(ApiError.bedRequest(e.message))
         }
     }
 
@@ -88,12 +86,13 @@ class BasketDeviceController {
             const basket = await Basket.findOne({ where: { userId } })
             const data = await BasketDevice.destroy({
                 where: {
-                    basketId: basket.dataValues.id, deviceId
+                    basketId: basket.dataValues.id,
+                    deviceId
                 }
             })
             return res.json({ "message": "Удаление прошло успешно" })
-        } catch (err) {
-            return res.json(err.message)
+        } catch (e) {
+            return res.json(e.message)
         }
     }
 
@@ -106,7 +105,7 @@ class BasketDeviceController {
                     basketId: basket.dataValues.id
                 }
             })
-            return res.json({ "message": ErrorMessage.SUCCESSFUL_DELETION_WITH_DEFINED_ID })
+            return res.json({ "message":"Удаление всех объектов прошло успешно" })
         } catch (e) {
             next(ApiError.bedRequest(ErrorMessage.ERROR_OBJECT_IS_NOT_EXIST))
         }

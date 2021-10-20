@@ -2,7 +2,6 @@ const uuid = require('uuid')
 const path = require('path')
 const { Device, DeviceInfo } = require('../models/models')
 const ApiError = require('../error/ApiError')
-const ApiMessage = require('../error/ApiMessage')
 
 class DeviceController {
     async create(req, res, next) {
@@ -27,7 +26,7 @@ class DeviceController {
 
             return res.json(device)
         } catch (err) {
-            next(ApiError.bedRequest({ "message": ApiMessage.ERROR_OBJECT_IS_NOT_CREATE }))
+            next(ApiError.bedRequest({ "message": "Ошибка при создании объекта" }))
         }
 
     }
@@ -53,7 +52,7 @@ class DeviceController {
                     });
                 }
             }).catch((e) => {
-                console.log('e.message')
+                next(ApiError.bedRequest({ "message": "Ошибка при обнавлении объекта" }))
             })
 
 
@@ -71,7 +70,7 @@ class DeviceController {
 
             return res.json({ "message": "Всё нормально" })
         } catch (e) {
-            next(ApiError.internal({ "message": ApiMessage.ERROR_OBJECT_IS_NOT_UPDATE }))
+            next(ApiError.internal({ "message": "Ошибка при обнавлении объекта" }))
         }
     }
 
@@ -85,7 +84,7 @@ class DeviceController {
             })
             return res.json(device)
         } catch (e) {
-            next(ApiError.bedRequest({ "message": ApiMessage.ERROR_OBJECT_IS_NOT_EXIST }))
+            next(ApiError.bedRequest({ "message": "Ошибка при получении объекта" }))
         }
     }
 
@@ -110,7 +109,7 @@ class DeviceController {
             }
             return res.json(devices)
         } catch (e) {
-            next(ApiError.internal({ "message": ApiMessage.ERROR_DATA_IS_NOT_RECEIVED }))
+            next(ApiError.internal({ "message": "Ошибка при получении всех объектов" }))
         }
     }
 
@@ -119,18 +118,18 @@ class DeviceController {
         try {
             const { id } = req.params
             await Device.destroy({ where: { id: id } })
-            return res.json({ "message": ApiMessage.SUCCESSFUL_DELETION_WITH_DEFINED_ID })
+            return res.json({ "message": "Объект удалён успешно" })
         } catch (e) {
-            next(ApiError.bedRequest({ "message": ApiMessage.ERROR_OBJECT_IS_NOT_EXIST }))
+            next(ApiError.bedRequest({ "message": "Ошибка при удалении объекта" }))
         }
     }
 
     async deleteAll(req, res, next) {
         try {
             await Device.destroy()
-            return res.json({ "message": ApiMessage.SUCCESSFUL_DELETION })
+            return res.json({ "message": "Все объекты удалены успешно" })
         } catch (e) {
-            next(ApiError.internal({ "message": ApiMessage.ERROR_DATA_IS_NOT_DELETED }))
+            next(ApiError.internal({ "message": "Ошибка при удалении всех объектов" }))
         }
     }
 

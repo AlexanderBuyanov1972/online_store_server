@@ -1,15 +1,6 @@
 const { Type } = require('../models/models')
 const ApiError = require('../error/ApiError')
 const HelpFunction = require('./helpFunctions')
-const {
-    ERROR_OBJECT_IS_NOT_CREATE,
-    ERROR_OBJECT_IS_NOT_UPDATE,
-    ERROR_OBJECT_IS_NOT_EXIST,
-    ERROR_DATA_IS_NOT_RECEIVED,
-    ERROR_DATA_IS_NOT_DELETED,
-    SUCCESSFUL_DELETION,
-    SUCCESSFUL_DELETION_WITH_DEFINED_ID
-} = require('../error/ApiMessages')
 const { arraySort } = require('./helpFunctions')
 
 
