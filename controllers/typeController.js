@@ -48,11 +48,6 @@ class TypeController {
 
     }
 
-    arraySort = (array, value, compare) => {
-
-        return
-    }
-
     // delete one object by id
     async delete(req, res, next) {
         try {

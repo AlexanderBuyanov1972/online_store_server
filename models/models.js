@@ -80,6 +80,12 @@ Device.belongsTo(Brand)
 Type.belongsToMany(Brand, {through: TypeBrand})
 Brand.belongsToMany(Type, {through: TypeBrand})
 
+const Photo = sequelize.define('photo', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    img: {type: DataTypes.STRING, allowNull: false},
+    group: {type: DataTypes.STRING, allowNull: false},
+})
+
 module.exports = {
-    User, Device, Type, BasketDevice, Brand, DataTypes, DeviceInfo, Basket, Rating
+    User, Device, Type, BasketDevice, Brand, DataTypes, DeviceInfo, Basket, Rating, Photo
 }
