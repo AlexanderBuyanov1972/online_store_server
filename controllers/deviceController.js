@@ -5,9 +5,9 @@ const ApiError = require('../error/ApiError')
 
 class DeviceController {
     async create(req, res, next) {
+        let { name, price, rating, typeId, brandId, info } = req.body
+        const { img } = req.files
         try {
-            let { name, price, rating, typeId, brandId, info } = req.body
-            const { img } = req.files
             let fileName = uuid.v4() + '.jpg'
             await img.mv(path.resolve(__dirname, '..', 'static/photoDevices', fileName))
 
@@ -23,10 +23,9 @@ class DeviceController {
                     })
                 })
             }
-
             return res.json(device)
-        } catch (err) {
-            next(ApiError.bedRequest({ "message": "Ошибка при создании объекта" }))
+        } catch (e) {
+            return next(ApiError.bedRequest(e.message))
         }
 
     }
@@ -43,7 +42,7 @@ class DeviceController {
                 fileName = uuid.v4() + '.jpg'
                 await img.mv(path.resolve(__dirname, '..', 'static', fileName))
             }
-            await Device.update({ name, price, typeId, brandId, rating, img: fileName }, {
+            Device.update({ name, price, typeId, brandId, rating, img: fileName }, {
                 where: { id: id }
             }).then(num => {
                 if (num == 1) {
@@ -52,7 +51,7 @@ class DeviceController {
                     });
                 }
             }).catch((e) => {
-                next(ApiError.bedRequest({ "message": "Ошибка при обнавлении объекта" }))
+                return next(ApiError.bedRequest(e.message))
             })
 
 
@@ -70,21 +69,21 @@ class DeviceController {
 
             return res.json({ "message": "Всё нормально" })
         } catch (e) {
-            next(ApiError.internal({ "message": "Ошибка при обнавлении объекта" }))
+            return next(ApiError.internal(e.message))
         }
     }
 
 
     async getOne(req, res, next) {
+        const { id } = req.params
         try {
-            const { id } = req.params
             const device = await Device.findOne({
                 where: { id },
                 include: [{ model: DeviceInfo, as: 'info' }]
             })
             return res.json(device)
         } catch (e) {
-            next(ApiError.bedRequest({ "message": "Ошибка при получении объекта" }))
+            return next(ApiError.internal(e.message))
         }
     }
 
@@ -109,18 +108,18 @@ class DeviceController {
             }
             return res.json(devices)
         } catch (e) {
-            next(ApiError.internal({ "message": "Ошибка при получении всех объектов" }))
+            return next(ApiError.internal(e.message))
         }
     }
 
 
     async delete(req, res, next) {
+        const { id } = req.params
         try {
-            const { id } = req.params
             await Device.destroy({ where: { id: id } })
             return res.json({ "message": "Объект удалён успешно" })
         } catch (e) {
-            next(ApiError.bedRequest({ "message": "Ошибка при удалении объекта" }))
+            return next(ApiError.bedRequest(e.message))
         }
     }
 
@@ -129,7 +128,7 @@ class DeviceController {
             await Device.destroy()
             return res.json({ "message": "Все объекты удалены успешно" })
         } catch (e) {
-            next(ApiError.internal({ "message": "Ошибка при удалении всех объектов" }))
+            return next(ApiError.internal(e.message))
         }
     }
 

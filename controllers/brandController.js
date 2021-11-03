@@ -5,61 +5,59 @@ const HelpFunction = require('./helpFunctions')
 class BrandController {
     async create(req, res, next) {
         const { name } = req.body
-        Brand.create({ name }).then((data) => {
+        try {
+            const data = await Brand.create({ name })
             return res.json(data)
-        }).catch((err) => {
-            return res.json(next(ApiError.internal(ErrorMessage.ERROR_OBJECT_IS_NOT_CREATE)))
-        })
+        } catch (e) {
+            return next(ApiError.internal(e.message))
+        }
     }
 
     async update(req, res, next) {
+        const { id } = req.params
         try {
-            const { id } = req.params
-            const brand = await Brand.update(req.body, {
-                where: { id: id }
-            })
+            const brand = await Brand.update(req.body, { where: { id: id } })
             return res.json(brand)
         } catch (e) {
-            next(ApiError.internal(ERROR_OBJECT_IS_NOT_UPDATE))
+            return next(ApiError.internal(e.message))
         }
     }
 
     async getOne(req, res, next) {
+        const { id } = req.params
         try {
-            const { id } = req.params
             const brand = await Brand.findByPk(id)
             return res.json(brand)
         } catch (e) {
-            next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
+            return next(ApiError.internal(e.message))
         }
     }
 
     async getAll(req, res, next) {
         try {
             const brands = await Brand.findAll()
-            const value = 'All brands'
-            return res.json(HelpFunction.arraySort(brands, value))
+            return res.json(HelpFunction.arraySort(brands, 'All brands'))
         } catch (e) {
-            next(ApiError.internal(ERROR_DATA_IS_NOT_RECEIVED))
+            return next(ApiError.internal(e.message))
         }
     }
 
     async delete(req, res, next) {
+        const { id } = req.params
         try {
-            const { id } = req.params
             await Brand.destroy({ where: { id: id } })
-            return res.json({ "message": SUCCESSFUL_DELETION_WITH_DEFINED_ID })
+            return res.json({ "message": "Удаление прошло успешно" })
         } catch (e) {
-            next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
+            return next(ApiError.internal(e.message))
         }
     }
 
     async deleteAll(req, res, next) {
         try {
             await Brand.destroy()
-            return res.json({ "message": SUCCESSFUL_DELETION })
+            return res.json({ "message": "Удаление прошло успешно" })
         } catch (e) {
-            next(ApiError.internal(ERROR_DATA_IS_NOT_DELETED))
+            return next(ApiError.internal(e.message))
         }
     }
 

@@ -1,13 +1,13 @@
-const { Basket } = require('../models/models')
+const { Favorite } = require('../models/models')
 const ApiError = require('../error/ApiError')
 
-class BasketController {
+class FavoriteController {
 
     async getOne(req, res, next) {
         try {
             const { id } = req.params
-            const basket = await Basket.findOne({ where: { userId: id } })
-            return res.json(basket)
+            const favorite = await Favorite.findOne({ where: { userId: id } })
+            return res.json(favorite)
         } catch (e) {
             return next(ApiError.bedRequest(e.message))
         }
@@ -16,7 +16,7 @@ class BasketController {
     async delete(req, res, next) {
         try {
             const { id } = req.params
-            await Basket.destroy({ where: { id: id } })
+            await Favorite.destroy({ where: { id: id } })
             return res.json({ "message": "Удаление прошло успешно" })
         } catch (e) {
             return next(ApiError.bedRequest(e.message))
@@ -24,4 +24,4 @@ class BasketController {
     }
 }
 
-module.exports = new BasketController()
+module.exports = new FavoriteController()

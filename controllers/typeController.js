@@ -7,31 +7,32 @@ const { arraySort } = require('./helpFunctions')
 class TypeController {
     async create(req, res) {
         const { name } = req.body
-        Type.create({ name }).then((data) => {
+        try {
+            const data = await Type.create({ name })
             return res.json(data)
-        }).catch((err) => {
-            return res.json({ message: err.message })
-        })
-
+        } catch (e) {
+            return next(ApiError.internal(e.message))
+        }
     }
 
     async update(req, res) {
         const { id } = req.params
-        Type.update(req.body, {
-            where: { id: id }
-        }).then(() => res.json({ message: '' })).catch((err) => {
-            return res.json({ message: err.message })
-        })
+        try {
+            const data = await Type.update(req.body, { where: { id: id } })
+            return res.json(data)
+        } catch (e) {
+            return next(ApiError.internal(e.message))
+        }
     }
 
     // get one object by id
     async getOne(req, res, next) {
+        const { id } = req.params
         try {
-            const { id } = req.params
-            const type = await Type.findByPk(id)
-            return res.json(type)
+            const data = await Type.findByPk(id)
+            return res.json(data)
         } catch (e) {
-            next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
+            return next(ApiError.internal(e.message))
         }
 
     }
@@ -40,22 +41,21 @@ class TypeController {
     async getAll(req, res, next) {
         try {
             const types = await Type.findAll()
-            const value = 'Все типы'
-            return res.json(HelpFunction.arraySort(types, value))
+            return res.json(HelpFunction.arraySort(types, 'Все типы'))
         } catch (e) {
-            next(ApiError.internal(ERROR_DATA_IS_NOT_RECEIVED))
+            return next(ApiError.internal(e.message))
         }
 
     }
 
     // delete one object by id
     async delete(req, res, next) {
+        const { id } = req.params
         try {
-            const { id } = req.params
             await Type.destroy({ where: { id: id } })
-            return res.json({ "message": SUCCESSFUL_DELETION_WITH_DEFINED_ID })
+            return res.json({ "message": "Удаление прошло успешно" })
         } catch (e) {
-            next(ApiError.bedRequest(ERROR_OBJECT_IS_NOT_EXIST))
+            return next(ApiError.internal(e.message))
         }
 
     }
@@ -64,9 +64,9 @@ class TypeController {
     async deleteAll(req, res, next) {
         try {
             await Type.destroy()
-            return res.json({ "message": SUCCESSFUL_DELETION })
+            return res.json({ "message": "Удаление прошло успешно" })
         } catch (e) {
-            next(ApiError.internal(ERROR_DATA_IS_NOT_DELETED))
+            return next(ApiError.internal(e.message))
         }
     }
 
