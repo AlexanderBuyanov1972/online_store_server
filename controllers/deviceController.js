@@ -43,14 +43,11 @@ class DeviceController {
                 await img.mv(path.resolve(__dirname, '..', 'static', fileName))
             }
             Device.update({ name, price, typeId, brandId, rating, img: fileName }, {
-                where: { id: id }
+                where: { id }
             }).then(num => {
-                if (num == 1) {
-                    res.send({
-                        message: "Tutorial was updated successfully."
-                    });
-                }
-            }).catch((e) => {
+                if (num == 1)
+                    res.send({ message: ApiError.messageOK })
+            }).catch(e => {
                 return next(ApiError.bedRequest(e.message))
             })
 
@@ -67,7 +64,7 @@ class DeviceController {
                 })
             }
 
-            return res.json({ "message": "Всё нормально" })
+            return res.json({ "message": ApiError.messageOK })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }
@@ -117,7 +114,7 @@ class DeviceController {
         const { id } = req.params
         try {
             await Device.destroy({ where: { id: id } })
-            return res.json({ "message": "Объект удалён успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.bedRequest(e.message))
         }
@@ -126,7 +123,7 @@ class DeviceController {
     async deleteAll(req, res, next) {
         try {
             await Device.destroy()
-            return res.json({ "message": "Все объекты удалены успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }

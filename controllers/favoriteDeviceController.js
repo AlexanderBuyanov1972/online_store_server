@@ -1,14 +1,18 @@
 const { FavoriteDevice, Favorite, Device } = require('../models/models')
 const ApiError = require('../error/ApiError')
 
+
+
 class FavoriteDeviceController {
     async create(req, res, next) {
         try {
             const { userId, deviceId } = req.params
             const { id } = await Favorite.findOne({ where: { userId } })
+            if (!id)
+                return next(ApiError.bedRequest({ 'message': ApiError.messageNotFavorite }))
             const favorite = await FavoriteDevice.findOne({ where: { favoriteId: id, deviceId } })
             if (favorite)
-                return res.json({ 'message': 'Объект уже существует' })
+                return next(ApiError.bedRequest({ 'message': ApiError.messageAlreadyExists }))
             const data = await FavoriteDevice.create({ favoriteId: id, deviceId })
             return res.json(data)
         } catch (e) {
@@ -21,6 +25,8 @@ class FavoriteDeviceController {
         try {
             const { userId, deviceId } = req.params
             const { id } = await Favorite.findOne({ where: { userId } })
+            if (!id)
+                return next(ApiError.bedRequest({ 'message': ApiError.messageNotFavorite }))
             const data = await FavoriteDevice.findOne({ where: { favoriteId: id, deviceId } })
             return res.json(data)
         } catch (e) {
@@ -32,6 +38,8 @@ class FavoriteDeviceController {
         try {
             const { userId } = req.params
             const { id } = await Favorite.findOne({ where: { userId } })
+            if (!id)
+                return next(ApiError.bedRequest({ 'message': ApiError.messageNotFavorite }))
             const data = await FavoriteDevice.findAll({ where: { favoriteId: id } })
             let result = []
             for (let i = 0; i < data.length; i++) {
@@ -48,10 +56,12 @@ class FavoriteDeviceController {
         try {
             const { userId, deviceId } = req.params
             const { id } = await Favorite.findOne({ where: { userId } })
+            if (!id)
+                return next(ApiError.bedRequest({ 'message': ApiError.messageNotFavorite }))
             const device = await FavoriteDevice.findOne({ where: { favoriteId: id, deviceId } })
             if (device)
                 await FavoriteDevice.destroy({ where: { id } })
-            return res.json({ "message": "Удаление прошло успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }
@@ -61,8 +71,10 @@ class FavoriteDeviceController {
         try {
             const { userId, deviceId } = req.params
             const { id } = await Favorite.findOne({ where: { userId } })
+            if (!id)
+                return next(ApiError.bedRequest({ 'message': ApiError.messageNotFavorite }))
             await FavoriteDevice.destroy({ where: { favoriteId: id, deviceId } })
-            return res.json({ "message": "Удаление прошло успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }
@@ -72,8 +84,10 @@ class FavoriteDeviceController {
         try {
             const { userId } = req.params
             const { id } = await Favorite.findOne({ where: { userId } })
+            if (!id)
+                return next(ApiError.bedRequest({ 'message': ApiError.messageNotFavorite }))
             await FavoriteDevice.destroy({ where: { favoriteId: id } })
-            return res.json({ "message": "Удаление всех объектов прошло успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }

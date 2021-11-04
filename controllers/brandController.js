@@ -46,7 +46,7 @@ class BrandController {
         const { id } = req.params
         try {
             await Brand.destroy({ where: { id: id } })
-            return res.json({ "message": "Удаление прошло успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }
@@ -55,7 +55,7 @@ class BrandController {
     async deleteAll(req, res, next) {
         try {
             await Brand.destroy()
-            return res.json({ "message": "Удаление прошло успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }

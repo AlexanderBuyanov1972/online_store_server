@@ -53,7 +53,7 @@ class TypeController {
         const { id } = req.params
         try {
             await Type.destroy({ where: { id: id } })
-            return res.json({ "message": "Удаление прошло успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }
@@ -64,7 +64,7 @@ class TypeController {
     async deleteAll(req, res, next) {
         try {
             await Type.destroy()
-            return res.json({ "message": "Удаление прошло успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }

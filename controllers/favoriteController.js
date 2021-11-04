@@ -17,7 +17,7 @@ class FavoriteController {
         try {
             const { id } = req.params
             await Favorite.destroy({ where: { id: id } })
-            return res.json({ "message": "Удаление прошло успешно" })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.bedRequest(e.message))
         }
