@@ -1,3 +1,4 @@
+const { Device } = require('../models/models')
 const uuid = require('uuid')
 const path = require('path')
 
