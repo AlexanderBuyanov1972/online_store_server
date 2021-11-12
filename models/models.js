@@ -2,12 +2,31 @@ const sequelize = require('../db')
 const { DataTypes } = require('sequelize')
 
 // Создание сущностей
+
 const User = sequelize.define('user', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     email: { type: DataTypes.STRING, unique: true },
     password: { type: DataTypes.STRING },
     role: { type: DataTypes.STRING, defaultValue: "USER" },
+
+    name: { type: DataTypes.STRING },
+    family: { type: DataTypes.STRING },
+    dateBirth: { type: DataTypes.STRING },
+    phoneNumber: { type: DataTypes.STRING },
 })
+
+const UserAddress = sequelize.define('user_address', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    nameRecipient: { type: DataTypes.STRING, allowNull: false },
+    familyRecipient: { type: DataTypes.STRING, allowNull: false },
+    phoneNumberRecipient: { type: DataTypes.STRING, allowNull: false },
+    city: { type: DataTypes.STRING, allowNull: false },
+    street: { type: DataTypes.STRING, allowNull: false },
+    house: { type: DataTypes.STRING, allowNull: false },
+    apatment: { type: DataTypes.STRING, allowNull: false },
+    index: { type: DataTypes.STRING, allowNull: false },
+})
+
 
 const Basket = sequelize.define('basket', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -83,6 +102,9 @@ FavoriteDevice.belongsTo(Device)
 Device.hasMany(DeviceInfo, { as: 'info' })
 DeviceInfo.belongsTo(Device)
 
+User.hasMany(UserAddress, { as: 'address' })
+UserAddress.belongsTo(User)
+
 Type.hasMany(Device)
 Device.belongsTo(Type)
 
@@ -102,5 +124,6 @@ const Photo = sequelize.define('photo', {
 })
 
 module.exports = {
-    User, Device, Type, BasketDevice, Brand, DataTypes, DeviceInfo, Basket, Rating, Photo, FavoriteDevice, Favorite
+    User, UserAddress, Device, Type, BasketDevice, Brand, DataTypes,
+    DeviceInfo, Basket, Rating, Photo, FavoriteDevice, Favorite
 }

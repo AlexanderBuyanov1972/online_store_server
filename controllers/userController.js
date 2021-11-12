@@ -1,51 +1,73 @@
 const ApiError = require('../error/ApiError')
-const bcrypt = require('bcrypt')
-const { User, Basket, Favorite } = require('../models/models')
-const jwt = require('jsonwebtoken')
-
-const generateJwt = (id, email, role) => {
-    return jwt.sign({ id, email, role }, process.env.SECRET_KEY, { expiresIn: '24h' })
-}
+const { User, UserAddress } = require('../models/models')
 
 class UserController {
-    async registration(req, res, next) {
-        const { email, password, role } = req.body
-        if (!email || !password) {
-            return next(ApiError.bedRequest({ 'message': 'Некорректный email или password' }))
-        }
-        const candidate = await User.findOne({ where: { email } })
+   
+    async create(req, res, next) {
 
-        if (candidate) {
-            return next(ApiError.bedRequest({ 'message': 'Пользователь с таким email уже существует' }))
-        }
-        //хеширование пароля
-        const hashPassword = await bcrypt.hash(password, 5)
-
-        const user = await User.create({ email, password: hashPassword, role })
-        const basket = await Basket.create({ userId: user.id })
-        const favorite = await Favorite.create({ userId: user.id })
-        const token = generateJwt(user.id, user.email, user.role)
-        return res.json({ token })
+        return data
     }
 
-    async login(req, res, next) {
-        const { email, password } = req.body
-        const user = await User.findOne({ where: { email } })
-        if (!user) {
-            return next(ApiError.bedRequest({ 'message': 'Пользователь с таким email не существует. Зарегистрируйтесь.' }))
+    async update(req, res, next) {
+        const { id } = req.params
+        const { nameRecipient, familyRecipient, phoneNumberRecipient, city, street, house, apatment, index } = req.body
+        const { name, family, email, dateBirth, phoneNumber, passwordOld, passwordNew } = req.body
+        if (passwordOld && passwordOld !== '') {
+            const one = await User.findOne({ where: { id } })
+            console.log('one--->', one)
+            if (!one)
+                return next(ApiError.bedRequest({ 'message': 'Пользователь с таким id не существует' }))
+            let comparePassword = bcrypt.compareSync(passwordOld, one.password)
+            if (!comparePassword) {
+                return next(ApiError.bedRequest({ 'message': 'Ваш старый пароль не верен' }))
+            }
+            const hashPassword = await bcrypt.hash(passwordNew, 5)
+            const user = { id, name, family, email, dateBirth, phoneNumber, password: hashPassword, role: one.role }
+            User.update(user, {
+                where: { id }
+            }).then(num => {
+                if (num == 1)
+                    return res.send(user)
+            }).catch(e => {
+                return next(ApiError.bedRequest(e.message))
+            })
         }
-        let comparePassword = bcrypt.compareSync(password, user.password)
-        if (!comparePassword) {
-            return next(ApiError.bedRequest({ 'message': 'Пароли не совпадают' }))
+
+        if (nameRecipient && nameRecipient !== '') {
+            const addressRecipient = {
+                nameRecipient, familyRecipient, phoneNumberRecipient,
+                city, street, house, apatment, index, userId: id
+            }
+            await UserAddress.create(addressRecipient)
+            const data = await UserAddress.findAndCountAll({ where: { userId: id } })
+            return res.json(data)
         }
-        const token = generateJwt(user.id, user.email, user.role)
-        return res.json({ token })
+
     }
 
-    async check(req, res, next) {
-        const token = generateJwt(req.user.id, req.user.email, req.user.role)
-        return res.json({ token })
+    async get(req, res, next) {
+        const { id } = req.params
+        try {
+            const user = await User.findOne({
+                where: { id },
+                // include: [{ model: UserAddress, as: 'address' }]
+            })
+            return res.json(user)
+        } catch (e) {
+            return next(ApiError.internal(e.message))
+        }
     }
+
+    async delete(req, res, next) {
+        const { id } = req.params
+        try {
+            await User.destroy({ where: { id } })
+            return res.json({ "message": ApiError.messageDeleteSuccessfully })
+        } catch (e) {
+            return next(ApiError.bedRequest(e.message))
+        }
+    }
+   
 }
 
 module.exports = new UserController()
