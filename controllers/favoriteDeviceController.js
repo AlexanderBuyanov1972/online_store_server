@@ -59,9 +59,10 @@ class FavoriteDeviceController {
             if (!id)
                 return next(ApiError.bedRequest({ 'message': ApiError.messageNotFavorite }))
             const device = await FavoriteDevice.findOne({ where: { favoriteId: id, deviceId } })
-            if (device)
-                await FavoriteDevice.destroy({ where: { id } })
-            return res.json({ "message": ApiError.messageDeleteSuccessfully })
+            if (device) {
+                const result = await FavoriteDevice.destroy({ where: { id: device.id } })
+                return res.json(result)
+            }
         } catch (e) {
             return next(ApiError.internal(e.message))
         }

@@ -2,8 +2,8 @@ class ApiError extends Error {
     static messageOK = 'OK'
     static messageNotBasket = 'У данного пользователя нет корзины'
     static messageNotFavorite = 'У данного пользователя нет избранного'
-    static messageDeleteSuccessfully= 'Удаление прошло успешно'
-    static messageAlreadyExists= 'Объект уже существует'
+    static messageDeleteSuccessfully = 'Удаление прошло успешно'
+    static messageAlreadyExists = 'Объект уже существует'
     constructor(status, message) {
         super()
         this.status = status

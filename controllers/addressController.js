@@ -35,10 +35,30 @@ class AddressController {
 
     async update(req, res, next) {
         const { id } = req.params
-        const { address } = req.body
+        const {
+            nameRecipient,
+            familyRecipient,
+            phoneNumberRecipient,
+            city,
+            street,
+            house,
+            apatment,
+            index,
+            userId
+        } = req.body
         try {
-            const data = await UserAddress.update(address, { where: { id } })
-            return res.json(data)
+            const data = await UserAddress.update({
+                nameRecipient,
+                familyRecipient,
+                phoneNumberRecipient,
+                city,
+                street,
+                house,
+                apatment,
+                index,
+                userId
+            }, { where: { id } })
+            return res.json({ "message": 'Обновление прошло успешно' })
         } catch (e) {
             return next(ApiError.internal(e.message))
         }
@@ -74,8 +94,6 @@ class AddressController {
         }
     }
 
-
-
     async deleteAllGroup(req, res, next) {
         const { id } = req.params
         try {
@@ -83,16 +101,6 @@ class AddressController {
             return res.json({ "message": ApiError.messageDeleteSuccessfully })
         } catch (e) {
             return next(ApiError.internal(e.message))
-        }
-    }
-
-    async getAllAddresses(req, res, next) {
-        const { id } = req.params
-        try {
-            const data = await UserAddress.findAndCountAll({ where: { userId: id } })
-            return res.json(data)
-        } catch (e) {
-            return next(ApiError.bedRequest(e.message))
         }
     }
 

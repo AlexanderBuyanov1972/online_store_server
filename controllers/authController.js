@@ -11,12 +11,12 @@ class AuthController {
     async registration(req, res, next) {
         const { email, password, role } = req.body
         if (!email || !password) {
-            return next(ApiError.bedRequest({ 'message': 'Некорректный email или password' }))
+            return next(ApiError.bedRequest('Некорректный email или password'))
         }
         const candidate = await User.findOne({ where: { email } })
 
         if (candidate) {
-            return next(ApiError.bedRequest({ 'message': 'Пользователь с таким email уже существует' }))
+            return next(ApiError.bedRequest('Пользователь с таким email уже существует'))
         }
         //хеширование пароля
         const hashPassword = await bcrypt.hash(password, 5)
@@ -27,15 +27,18 @@ class AuthController {
         return res.json({ token })
     }
 
-    async login(req, res, next) {
+    async login(req, res) {
         const { email, password } = req.body
-        const user = await User.findOne({ where: { email } })
-        if (!user) {
-            return next(ApiError.bedRequest({ 'message': 'Пользователь с таким email не существует. Зарегистрируйтесь.' }))
+        let user
+        try {
+            user = await User.findOne({ where: { email } })
+        } catch (error) {
+            return res.json({ 'message': 'Пользователь с таким email не существует. Зарегистрируйтесь.' })
         }
+
         let comparePassword = bcrypt.compareSync(password, user.password)
         if (!comparePassword) {
-            return next(ApiError.bedRequest({ 'message': 'Пароли не совпадают' }))
+            return res.json({ 'message': 'Пароли не совпадают' })
         }
         const token = generateJwt(user.id, user.email, user.role)
         return res.json({ token })
@@ -45,8 +48,6 @@ class AuthController {
         const token = generateJwt(req.user.id, req.user.email, req.user.role)
         return res.json({ token })
     }
-
-
 }
 
 module.exports = new AuthController()

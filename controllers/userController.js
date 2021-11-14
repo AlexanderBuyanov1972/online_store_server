@@ -2,7 +2,7 @@ const ApiError = require('../error/ApiError')
 const { User, UserAddress } = require('../models/models')
 
 class UserController {
-   
+
     async create(req, res, next) {
 
         return data
@@ -14,7 +14,6 @@ class UserController {
         const { name, family, email, dateBirth, phoneNumber, passwordOld, passwordNew } = req.body
         if (passwordOld && passwordOld !== '') {
             const one = await User.findOne({ where: { id } })
-            console.log('one--->', one)
             if (!one)
                 return next(ApiError.bedRequest({ 'message': 'Пользователь с таким id не существует' }))
             let comparePassword = bcrypt.compareSync(passwordOld, one.password)
@@ -35,8 +34,15 @@ class UserController {
 
         if (nameRecipient && nameRecipient !== '') {
             const addressRecipient = {
-                nameRecipient, familyRecipient, phoneNumberRecipient,
-                city, street, house, apatment, index, userId: id
+                nameRecipient,
+                familyRecipient,
+                phoneNumberRecipient,
+                city,
+                street,
+                house,
+                apatment,
+                index,
+                userId: id
             }
             await UserAddress.create(addressRecipient)
             const data = await UserAddress.findAndCountAll({ where: { userId: id } })
@@ -67,7 +73,7 @@ class UserController {
             return next(ApiError.bedRequest(e.message))
         }
     }
-   
+
 }
 
 module.exports = new UserController()
