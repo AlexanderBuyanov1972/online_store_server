@@ -50,7 +50,11 @@ class BasketDeviceController {
                 let dev = await Device.findOne({ where: { id: key } })
                 result.push({ device: dev, count: map.get(key) })
             }
-            return res.json(result)
+            let totalPrice = 0
+            for (let i=0; i < result.length; i++) {
+                totalPrice = totalPrice + result[i].device.price * result[i].count
+            }
+            return res.json({result, totalPrice})
         } catch (e) {
             return next(ApiError.internal(e.message))
         }

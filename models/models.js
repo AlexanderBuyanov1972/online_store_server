@@ -20,6 +20,7 @@ const UserAddress = sequelize.define('user_address', {
     nameRecipient: { type: DataTypes.STRING, allowNull: false },
     familyRecipient: { type: DataTypes.STRING, allowNull: false },
     phoneNumberRecipient: { type: DataTypes.STRING, allowNull: false },
+    emailRecipient: { type: DataTypes.STRING, allowNull: false },
     city: { type: DataTypes.STRING, allowNull: false },
     street: { type: DataTypes.STRING, allowNull: false },
     house: { type: DataTypes.STRING, allowNull: false },
