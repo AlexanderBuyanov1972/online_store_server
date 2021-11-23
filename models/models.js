@@ -26,6 +26,7 @@ const UserAddress = sequelize.define('user_address', {
     house: { type: DataTypes.STRING, allowNull: false },
     apatment: { type: DataTypes.STRING, allowNull: false },
     index: { type: DataTypes.STRING, allowNull: false },
+    isDefault: { type: DataTypes.BOOLEAN, allowNull: false },
 })
 
 

@@ -41,7 +41,7 @@ class TypeController {
     async getAll(req, res, next) {
         try {
             const types = await Type.findAll()
-            return res.json(HelpFunction.arraySort(types, 'Все типы'))
+            return res.json(HelpFunction.sortArray(types, 'name', 'name', 'Все типы'))
         } catch (e) {
             return next(ApiError.internal(e.message))
         }

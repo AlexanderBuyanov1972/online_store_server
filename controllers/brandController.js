@@ -36,7 +36,7 @@ class BrandController {
     async getAll(req, res, next) {
         try {
             const brands = await Brand.findAll()
-            return res.json(HelpFunction.arraySort(brands, 'All brands'))
+            return res.json(HelpFunction.sortArray(brands, 'name', 'name', 'All brands'))
         } catch (e) {
             return next(ApiError.internal(e.message))
         }
