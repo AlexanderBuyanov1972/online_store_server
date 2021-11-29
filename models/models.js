@@ -3,6 +3,17 @@ const { DataTypes } = require('sequelize')
 
 // Создание сущностей
 
+const Order = sequelize.define('order', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    payment: { type: DataTypes.STRING, allowNull: false },
+    post: { type: DataTypes.STRING, allowNull: false },
+    options: { type: DataTypes.STRING, allowNull: false },
+    branchParcelMachine: { type: DataTypes.STRING, allowNull: false },
+    comments: { type: DataTypes.STRING, allowNull: false },
+    sendBill: { type: DataTypes.BOOLEAN, allowNull: false },
+    
+})
+
 const User = sequelize.define('user', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     email: { type: DataTypes.STRING, unique: true },
@@ -17,10 +28,10 @@ const User = sequelize.define('user', {
 
 const UserAddress = sequelize.define('user_address', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    nameRecipient: { type: DataTypes.STRING, allowNull: false },
-    familyRecipient: { type: DataTypes.STRING, allowNull: false },
-    phoneNumberRecipient: { type: DataTypes.STRING, allowNull: false },
-    emailRecipient: { type: DataTypes.STRING, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: false },
+    family: { type: DataTypes.STRING, allowNull: false },
+    phoneNumber: { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING, allowNull: false },
     city: { type: DataTypes.STRING, allowNull: false },
     street: { type: DataTypes.STRING, allowNull: false },
     house: { type: DataTypes.STRING, allowNull: false },
@@ -119,6 +130,12 @@ Device.belongsTo(Brand)
 Type.belongsToMany(Brand, { through: TypeBrand })
 Brand.belongsToMany(Type, { through: TypeBrand })
 
+Order.hasOne(User)
+User.belongsTo(Order)
+
+Order.hasOne(UserAddress)
+UserAddress.belongsTo(Order)
+
 const Photo = sequelize.define('photo', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     img: { type: DataTypes.STRING, allowNull: false },
@@ -127,5 +144,5 @@ const Photo = sequelize.define('photo', {
 
 module.exports = {
     User, UserAddress, Device, Type, BasketDevice, Brand, DataTypes,
-    DeviceInfo, Basket, Rating, Photo, FavoriteDevice, Favorite
+    DeviceInfo, Basket, Rating, Photo, FavoriteDevice, Favorite, Order
 }

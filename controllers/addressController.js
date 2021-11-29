@@ -4,8 +4,7 @@ const HelpFunction = require('./helpFunctions')
 
 class AddressController {
     async create(req, res, next) {
-        const { nameRecipient, familyRecipient, phoneNumberRecipient, emailRecipient,
-            city, street, house, apatment, index, isDefault, userId } = req.body
+        const { name, family, phoneNumber, email, city, street, house, apatment, index, isDefault, userId } = req.body
 
         try {
             if (isDefault === true) {
@@ -16,8 +15,7 @@ class AddressController {
                 })
             }
             const data = await UserAddress.create({
-                nameRecipient, familyRecipient, phoneNumberRecipient, emailRecipient,
-                city, street, house, apatment, index, isDefault, userId
+                name, family, phoneNumber, email, city, street, house, apatment, index, isDefault, userId
             })
             return res.json(data)
         } catch (e) {
@@ -27,8 +25,7 @@ class AddressController {
 
     async update(req, res, next) {
         const { id } = req.params
-        const { nameRecipient, familyRecipient, phoneNumberRecipient, emailRecipient,
-            city, street, house, apatment, index, isDefault, userId } = req.body
+        const { name, family, phoneNumber, email, city, street, house, apatment, index, isDefault, userId } = req.body
         try {
             if (isDefault === true) {
                 const data = await UserAddress.findAll({ where: { userId } })
@@ -38,8 +35,7 @@ class AddressController {
                 })
             }
             const data = await UserAddress.update({
-                nameRecipient, familyRecipient, phoneNumberRecipient, emailRecipient,
-                city, street, house, apatment, index, isDefault, userId
+                name, family, phoneNumber, email, city, street, house, apatment, index, isDefault, userId
             }, { where: { id } })
             return res.json({ "message": 'Обновление прошло успешно' })
         } catch (e) {
@@ -72,7 +68,7 @@ class AddressController {
         const { id } = req.params
         try {
             const data = await UserAddress.findAndCountAll({ where: { userId: id } })
-            return res.json(HelpFunction.sortFindAndCountAll(data, 'familyRecipient', 'isDefault', true))
+            return res.json(HelpFunction.sortFindAndCountAll(data, 'family', 'isDefault', true))
         } catch (e) {
             return next(ApiError.internal(e.message))
         }
