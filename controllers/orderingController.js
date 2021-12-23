@@ -4,8 +4,17 @@ const HelpFunction = require('./helpFunctions')
 
 class OrderingController {
     async create(req, res, next) {
-        const { name, family, phoneNumber, email, city, street, house, apatment, index, isDefault, userId } = req.body
-        const { order } = req.body
+        const { payment, post, deliveryMethod, branchParcelMachine,
+            name, family, phoneNumber, email,
+            city, street, house, apatment,
+            comments, userId, sendBill } = req.body
+
+        const order = {
+            payment, post, deliveryMethod, branchParcelMachine,
+            name, family, phoneNumber, email,
+            city, street, house, apatment,
+            comments, userId, sendBill
+        }
         try {
             const data = await Order.create(order)
             return res.json(data)

@@ -7,7 +7,7 @@ const Order = sequelize.define('order', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     payment: { type: DataTypes.STRING, allowNull: false },
     post: { type: DataTypes.STRING, allowNull: false },
-    options: { type: DataTypes.STRING, allowNull: false },
+    deliveryMethod: { type: DataTypes.STRING, allowNull: false },
     branchParcelMachine: { type: DataTypes.STRING, allowNull: false },
     comments: { type: DataTypes.STRING, allowNull: false },
     sendBill: { type: DataTypes.BOOLEAN, allowNull: false },
@@ -130,11 +130,11 @@ Device.belongsTo(Brand)
 Type.belongsToMany(Brand, { through: TypeBrand })
 Brand.belongsToMany(Type, { through: TypeBrand })
 
-Order.hasOne(User)
-User.belongsTo(Order)
+User.hasOne(Order)
+Order.belongsTo(User)
 
-Order.hasOne(UserAddress)
-UserAddress.belongsTo(Order)
+UserAddress.hasOne(Order)
+Order.belongsTo(UserAddress)
 
 const Photo = sequelize.define('photo', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },

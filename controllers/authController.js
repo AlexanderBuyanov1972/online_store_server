@@ -32,8 +32,10 @@ class AuthController {
         let user
         try {
             user = await User.findOne({ where: { email } })
-        } catch (error) {
+            if(!user)
             return res.json({ 'message': 'Пользователь с таким email не существует. Зарегистрируйтесь.' })
+        } catch (error) {
+            return res.json({ 'message': error.message })
         }
 
         let comparePassword = bcrypt.compareSync(password, user.password)
